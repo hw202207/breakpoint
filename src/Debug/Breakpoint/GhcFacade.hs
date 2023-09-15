@@ -60,6 +60,7 @@ import           GHC.Hs.Expr as Ghc
 import           GHC.Types.PkgQual as Ghc
 import           GHC.Tc.Types.Origin as Ghc
 import           GHC.Unit.Types as Ghc
+import           GHC.Tc.Plugin  as Ghc (tcPluginIO)
 
 #elif MIN_VERSION_ghc(9,4,0)
 import           GHC.Driver.Plugins as Ghc hiding (TcPlugin)
@@ -98,6 +99,7 @@ import           GHC.Hs.Expr as Ghc
 import           GHC.Types.PkgQual as Ghc
 import           GHC.Tc.Types.Origin as Ghc
 import           GHC.Unit.Types as Ghc
+import           GHC.Tc.Plugin  as Ghc (tcPluginIO)
 
 #elif MIN_VERSION_ghc(9,2,0)
 import           GHC.Driver.Plugins as Ghc hiding (TcPlugin)
@@ -301,7 +303,9 @@ findImportedModule' modName = do
   result <- findM modName
   case result of
     Found _ m -> pure m
-    _ -> fail ( "Unable to find module: " ++ moduleNameString modName )
+    _ -> do
+      Ghc.tcPluginIO (putStrLn $ "Unable to find module "++ moduleNameString modName)
+      fail ( "Unable to find module: " ++ moduleNameString modName )
   where
     findM :: Ghc.ModuleName -> Ghc.TcPluginM Ghc.FindResult
 #if MIN_VERSION_ghc(9,4,0)
