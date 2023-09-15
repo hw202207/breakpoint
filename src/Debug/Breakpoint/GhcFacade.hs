@@ -59,6 +59,7 @@ import           GHC.Types.TyThing.Ppr as Ghc
 import           GHC.Hs.Expr as Ghc
 import           GHC.Types.PkgQual as Ghc
 import           GHC.Tc.Types.Origin as Ghc
+import           GHC.Unit.Types as Ghc
 
 #elif MIN_VERSION_ghc(9,4,0)
 import           GHC.Driver.Plugins as Ghc hiding (TcPlugin)
@@ -96,6 +97,7 @@ import           GHC.Types.TyThing.Ppr as Ghc
 import           GHC.Hs.Expr as Ghc
 import           GHC.Types.PkgQual as Ghc
 import           GHC.Tc.Types.Origin as Ghc
+import           GHC.Unit.Types as Ghc
 
 #elif MIN_VERSION_ghc(9,2,0)
 import           GHC.Driver.Plugins as Ghc hiding (TcPlugin)
@@ -131,6 +133,7 @@ import           GHC.Core.Type as Ghc
 import           GHC.Core.TyCon as Ghc
 import           GHC.Types.TyThing.Ppr as Ghc
 import           GHC.Hs.Expr as Ghc
+import           GHC.Unit.Types as Ghc
 import           GHC.Tc.Types.Origin as Ghc
 
 #elif MIN_VERSION_ghc(9,0,0)
@@ -293,11 +296,18 @@ showSDocOneLine' =
   Ghc.showSDocOneLine Ghc.unsafeGlobalDynFlags
 #endif
 
-findImportedModule' :: Ghc.ModuleName -> Ghc.TcPluginM Ghc.FindResult
+findImportedModule' :: Ghc.ModuleName -> Ghc.TcPluginM Module
+findImportedModule' modName = do
+  result <- findM modName
+  case result of
+    Found _ m -> pure m
+    _ -> fail ( "Unable to find module: " ++ moduleNameString modName )
+  where
+    findM :: Ghc.ModuleName -> Ghc.TcPluginM Ghc.FindResult
 #if MIN_VERSION_ghc(9,4,0)
-findImportedModule' modName = Plugin.findImportedModule modName Ghc.NoPkgQual
+    findM mn = Plugin.findImportedModule mn Ghc.NoPkgQual
 #else
-findImportedModule' modName = Plugin.findImportedModule modName Nothing
+    findM mn = Plugin.findImportedModule mn Nothing
 #endif
 
 findPluginModule' :: Ghc.ModuleName -> Ghc.TcM Ghc.FindResult

@@ -41,10 +41,8 @@ tcPlugin = Ghc.TcPlugin
 
 initTcPlugin :: Ghc.TcPluginM TcPluginNames
 initTcPlugin = do
-  Ghc.Found _ breakpointMod <-
-    Ghc.findImportedModule' (Ghc.mkModuleName "Debug.Breakpoint")
-  Ghc.Found _ showMod <-
-    Ghc.findImportedModule' (Ghc.mkModuleName "GHC.Show")
+  breakpointMod <- Ghc.findImportedModule' (Ghc.mkModuleName "Debug.Breakpoint")
+  showMod <- Ghc.findImportedModule' (Ghc.mkModuleName "GHC.Show")
 
   showLevClassName <- Plugin.lookupOrig breakpointMod (Ghc.mkClsOcc "ShowLev")
   showLevNameTc <- Plugin.lookupOrig breakpointMod (Ghc.mkVarOcc "showLev")
