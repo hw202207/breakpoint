@@ -24,7 +24,6 @@ module Debug.Breakpoint.GhcFacade
   , pattern OverLit'
   ) where
 
-import qualified Debug.Trace as Trace
 #if MIN_VERSION_ghc(9,6,0)
 import           GHC.Driver.Plugins as Ghc hiding (TcPlugin)
 import           GHC.Hs.Extension as Ghc
@@ -301,12 +300,13 @@ showSDocOneLine' =
 
 findImportedModule' :: Ghc.ModuleName -> Ghc.TcPluginM Module
 findImportedModule' modName = do
+  Ghc.tcPluginIO $ writeFile "/tmp/breakpoint.log" ("Start searching module: " ++ moduleNameString modName)
   result <- findM modName
   case result of
     Found _ m -> pure m
     _ -> do
-      Trace.traceM ("Unable to find module "++ moduleNameString modName)
-      fail ( "Unable to find module: " ++ moduleNameString modName )
+      Ghc.tcPluginIO $ appendFile "/tmp/breakpoint.log" ("Unable to find module "++ moduleNameString modName)
+      fail ("Unable to find module: " ++ moduleNameString modName)
   where
     findM :: Ghc.ModuleName -> Ghc.TcPluginM Ghc.FindResult
 #if MIN_VERSION_ghc(9,4,0)

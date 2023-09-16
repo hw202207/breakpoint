@@ -15,7 +15,6 @@ import qualified TcPluginM as Plugin
 #endif
 
 import qualified Debug.Breakpoint.GhcFacade as Ghc
-import qualified Debug.Trace as Trace
 
 --------------------------------------------------------------------------------
 -- Type Checker Plugin
@@ -42,7 +41,6 @@ tcPlugin = Ghc.TcPlugin
 
 initTcPlugin :: Ghc.TcPluginM TcPluginNames
 initTcPlugin = do
-  Trace.traceM "Start init TC plugin"
   breakpointMod <- Ghc.findImportedModule' (Ghc.mkModuleName "Debug.Breakpoint")
   showMod <- Ghc.findImportedModule' (Ghc.mkModuleName "GHC.Show")
 
