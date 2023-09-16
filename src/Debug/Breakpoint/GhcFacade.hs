@@ -300,12 +300,14 @@ showSDocOneLine' =
 
 findImportedModule' :: Ghc.ModuleName -> Ghc.TcPluginM Module
 findImportedModule' modName = do
-  Ghc.tcPluginIO $ appendFile "/tmp/breakpoint.log" ("Start searching module: " ++ moduleNameString modName)
+  Ghc.tcPluginIO (putStrLn $ "Start searching module: " ++ moduleNameString modName ++ "\n")
+  Ghc.tcPluginIO $ appendFile "/tmp/breakpoint.log" ("Start searching module: " ++ moduleNameString modName ++ "\n")
   result <- findM modName
   case result of
     Found _ m -> pure m
     _ -> do
-      Ghc.tcPluginIO $ appendFile "/tmp/breakpoint.log" ("Unable to find module "++ moduleNameString modName)
+      Ghc.tcPluginIO (putStrLn $ "Unable to find module: " ++ moduleNameString modName ++ "\n")
+      Ghc.tcPluginIO $ appendFile "/tmp/breakpoint.log" ("Unable to find module "++ moduleNameString modName ++ "\n")
       fail ("Unable to find module: " ++ moduleNameString modName)
   where
     findM :: Ghc.ModuleName -> Ghc.TcPluginM Ghc.FindResult

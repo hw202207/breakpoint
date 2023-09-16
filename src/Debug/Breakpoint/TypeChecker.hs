@@ -42,7 +42,7 @@ tcPlugin = Ghc.TcPlugin
 
 initTcPlugin :: Ghc.TcPluginM TcPluginNames
 initTcPlugin = do
-  Ghc.tcPluginIO $ writeFile "/tmp/breakpoint.log" ("initTcPlugin")
+  Ghc.tcPluginIO $ writeFile "/tmp/breakpoint.log" ("initTcPlugin\n")
   breakpointMod <- Ghc.findImportedModule' (Ghc.mkModuleName "Debug.Breakpoint")
   showMod <- Ghc.findImportedModule' (Ghc.mkModuleName "GHC.Show")
 
