@@ -8,6 +8,7 @@ module Debug.Breakpoint.TypeChecker
 import           Data.Either
 import           Data.Maybe
 import           Data.Traversable (for)
+import           GHC.Tc.Plugin  as Ghc (tcPluginIO)
 #if MIN_VERSION_ghc(9,0,0)
 import qualified GHC.Tc.Plugin as Plugin
 #else
@@ -41,6 +42,7 @@ tcPlugin = Ghc.TcPlugin
 
 initTcPlugin :: Ghc.TcPluginM TcPluginNames
 initTcPlugin = do
+  Ghc.tcPluginIO $ writeFile "/tmp/breakpoint.log" ("initTcPlugin")
   breakpointMod <- Ghc.findImportedModule' (Ghc.mkModuleName "Debug.Breakpoint")
   showMod <- Ghc.findImportedModule' (Ghc.mkModuleName "GHC.Show")
 

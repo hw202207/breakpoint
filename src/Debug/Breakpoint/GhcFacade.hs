@@ -300,7 +300,7 @@ showSDocOneLine' =
 
 findImportedModule' :: Ghc.ModuleName -> Ghc.TcPluginM Module
 findImportedModule' modName = do
-  Ghc.tcPluginIO $ writeFile "/tmp/breakpoint.log" ("Start searching module: " ++ moduleNameString modName)
+  Ghc.tcPluginIO $ appendFile "/tmp/breakpoint.log" ("Start searching module: " ++ moduleNameString modName)
   result <- findM modName
   case result of
     Found _ m -> pure m
